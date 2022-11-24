@@ -1,0 +1,139 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
+
+#define DEFAULT 0
+#define NUMBERS 1
+#define SYMBOLS 2
+#define NAVETC 3
+#define FUNCTIONS 4
+
+/ {
+        behaviors {
+            hm: homerow_mods {
+                compatible = "zmk,behavior-hold-tap";
+                label = "HOMEROW_MODS";
+                #binding-cells = <2>;
+                tapping_term_ms = <200>;
+                flavor = "tap-preferred";
+                bindings = <&kp>, <&kp>;
+            };
+        };
+};
+
+/ {
+        combos {
+               compatible = "zmk,combos";
+               combo_esc {
+                           timeout-ms = <50>;
+                           key-positions = <0 1>;
+                           bindings = <&kp ESC>;
+               };
+                combo_caps {
+                           timeout-ms = <50>;
+                           key-positions = <12 17>;
+                           bindings = <&caps_word>;
+               };
+               combo_bksp {
+                           timeout-ms = <50>;
+                           key-positions = <8 9>;
+                           bindings = <&kp BSPC>;
+               };
+               combo_single_quote {
+                           timeout-ms = <50>;
+                           key-positions = <18 19>;
+                           bindings = <&kp SINGLE_QUOTE>;
+               };
+        };
+};
+
+&caps_word {
+    continue-list = <UNDERSCORE MINUS>;
+};
+
+/ {
+        keymap {
+                compatible = "zmk,keymap";
+
+                default_layer {
+// ---------------------------------------------------------------------------------------------------
+// |    q    |    w    |    e     |    r    |  t  |   |  y  |    u    |    i     |    o    |    p    |
+// |  lctl a |  lalt s |  lsft d  |  lgui f |  g  |   |  h  |  rgui j |  rsft k  |  lalt l |  rctl ; |
+// |    z    |    x    |    c     |    v    |  b  |   |  n  |    m    |    ,     |    .    |    /    |
+//                         | NUM - BSPC | SYM - ENT | NAV - SPACE | FN TAB |
+                        bindings = <
+        &kp Q       &kp W       &kp E       &kp R      &kp T    &kp Y    &kp U      &kp I       &kp O      &kp P
+        &hm LGUI A &hm LALT S   &hm LCTRL D &hm LSFT F &kp G    &kp H    &hm RSFT J &hm RCTRL K &hm LALT L &hm RGUI SEMI
+        &kp Z       &kp X       &kp C       &kp V      &kp B    &kp N    &kp M      &kp COMMA   &kp PERIOD &kp FSLH
+                         &lt NUMBERS DEL    &lt SYMBOLS ENTER   &lt NAVETC SPACE    &lt FUNCTIONS TAB
+                        >;
+                };
+
+
+                number_layer {
+// ---------------------------------------------------------------------------
+// |   1  |   2  |   3   |   4   |   5   |   |  6  |  7  |  8  |  9  |   0   |
+// | lctl | lalt | lsft  | lgui  |       |   |  +  |  4  |  5  |  6  |   =   |
+// |      |      |       |       |       |   |  `  |  1  |  2  |  3  |   \   |
+//                         | trans | trans |   |  .  |  0  |  -  |
+                        bindings = <
+   &kp N1    &kp N2   &kp N3   &kp N4    &kp N5  &kp N6    &kp N7 &kp N8 &kp N9 &kp N0
+   &kp LGUI &kp LALT &kp LCTRL &kp LSHFT &none   &kp PLUS  &kp N4 &kp N5 &kp N6 &kp EQUAL
+   &none     &none    &none    &none     &none   &kp GRAVE &kp N1 &kp N2 &kp N3 &kp BSLH
+                           &trans   &trans  &kp N0 &kp MINUS
+                        >;
+                };
+
+                symbol_layer {
+// -------------------------------------------------------------------------
+// |   !  |   @  |   #   |   $   |   %   |   |  ^  |  &  |  *  |  (  |  )  |
+// | lctl | lalt | lsft  | lgui  |       |   |  -  |  =  |  {  |  }  |  |  |
+// |      |      |       |       |       |   |  _  |  +  |  [  |  ]  |  \  |
+//                       | trans | trans |   |  `  |  ~ |
+
+                        bindings = <
+   &kp EXCL  &kp AT    &kp HASH  &kp DLLR &kp PRCNT  &kp CARET  &kp AMPS  &kp ASTRK  &kp LPAR  &kp RPAR
+   &kp LGUI &kp LALT &kp LCTRL &kp LSHFT  &none      &kp MINUS  &kp EQUAL &kp LBRC   &kp RBRC  &kp PIPE
+   &none     &none     &none     &none    &none      &kp UNDER  &kp PLUS  &kp LBKT   &kp RBKT  &kp BSLH
+                           &trans   &trans     &kp RPAR   &kp UNDER
+
+                        >;
+                };
+
+                navetc_layer {
+// -------------------------------------------------------------------------
+// |      |      |       |       |       |   | home | pgup |      |      |     |
+// | lctl | lalt | lsft  | lgui  |       |   | left | down |  up  | rght |     |
+// |      |      |       |       |       |   | end  | pgdn |      |      |     |
+//                       | trans | trans |   |      |      |
+                        bindings = <
+   &none     &none    &none     &none    &none          &kp HOME &kp PG_UP &none  &none     &none
+   &kp LGUI &kp LALT &kp LCTRL &kp LSHFT &none          &kp LEFT &kp DOWN  &kp UP &kp RIGHT &none
+   &none     &none    &none     &none    &none          &kp END  &kp PG_DN &none  &none     &none
+                                &trans  &trans          &trans  &trans
+                        >;
+
+                };
+
+                function_layer {
+// -------------------------------------------------------------------------
+// |      |  F1  |  F2  |  F3  |  F4  |   | vol up | prev |  stop |     |     |
+// |      |  Ft  |  F6  |  F7  |  F8  |   | vol dn | next |  play |     |     |
+// |      |  F9  |  F10 |  F11 |  F13 |   | mute   |      |       |     |     |
+//                    | trans | trans |   |     |     |
+                        bindings = <
+   &kp F1 &kp F2  &kp F3  &kp F4  &none   &kp C_VOL_UP &kp C_PREV &kp C_STOP  &none &none
+   &kp F5 &kp F6  &kp F7  &kp F8  &none   &kp C_VOL_DN &kp C_NEXT &kp C_PLAY  &none &none
+   &kp F9 &kp F10 &kp F11 &kp F12 &none   &kp C_MUTE   &none      &kp C_PAUSE &none &none
+                  &trans     &trans          &trans     &trans
+                        >;
+
+                };
+        };
+};
